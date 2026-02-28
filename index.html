@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Game Lobby</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Universal Game Flooder</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #0f172a;
@@ -14,10 +14,12 @@
             --primary-hover: #4f46e5;
             --secondary: #ec4899;
             --secondary-hover: #db2777;
+            --success: #10b981;
             --danger: #ef4444;
             --text-main: #f8fafc;
             --text-muted: #94a3b8;
             --border: #475569;
+            --neon-glow: 0 0 10px rgba(99, 102, 241, 0.5);
         }
 
         * {
@@ -40,13 +42,14 @@
         .lobby-container {
             background-color: var(--container-bg);
             width: 100%;
-            max-width: 1000px;
-            border-radius: 20px;
+            max-width: 1100px;
+            border-radius: 24px;
             padding: 30px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
             display: flex;
             flex-direction: column;
             gap: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
         /* Header */
@@ -56,36 +59,61 @@
             align-items: center;
             border-bottom: 2px solid var(--border);
             padding-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .header h1 {
             font-size: 28px;
-            font-weight: 700;
-            letter-spacing: 0.5px;
+            font-weight: 800;
+            background: linear-gradient(to right, #818cf8, #c084fc);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .player-count {
-            background-color: var(--primary);
+            background-color: rgba(255,255,255,0.1);
             padding: 8px 16px;
             border-radius: 30px;
-            font-weight: 600;
-            font-size: 14px;
+            font-weight: 700;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--border);
         }
 
-        /* Controls */
-        .controls {
+        .count-badge {
+            background: var(--primary);
+            padding: 2px 8px;
+            border-radius: 10px;
+            color: white;
+            font-size: 12px;
+        }
+
+        /* Flooder Controls */
+        .flooder-section {
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+        }
+
+        .flooder-grid {
             display: flex;
-            gap: 15px;
+            gap: 10px;
+            align-items: center;
             flex-wrap: wrap;
-            background: rgba(0,0,0,0.15);
-            padding: 20px;
-            border-radius: 12px;
+            margin-bottom: 15px;
         }
 
         .input-group {
             display: flex;
             flex-grow: 1;
             gap: 10px;
+            max-width: 400px;
         }
 
         input[type="text"] {
@@ -97,54 +125,72 @@
             color: var(--text-main);
             font-size: 16px;
             outline: none;
-            transition: border-color 0.2s;
+            transition: all 0.2s;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.2);
         }
 
         input[type="text"]:focus {
-            border-color: var(--primary);
+            border-color: var(--secondary);
+            box-shadow: 0 0 10px rgba(236, 72, 153, 0.2);
         }
 
-        button {
+        /* Buttons */
+        .btn {
             padding: 12px 20px;
             border: none;
             border-radius: 8px;
-            font-weight: 600;
-            font-size: 15px;
+            font-weight: 700;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.2s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
+            user-select: none;
         }
 
-        button:active {
-            transform: scale(0.97);
-        }
-
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
+        .btn:active { transform: scale(0.95); }
 
         .btn-add { background-color: var(--primary); color: white; }
-        .btn-add:hover:not(:disabled) { background-color: var(--primary-hover); }
+        .btn-add:hover { background-color: var(--primary-hover); box-shadow: var(--neon-glow); }
 
         .btn-random { background-color: var(--secondary); color: white; }
-        .btn-random:hover:not(:disabled) { background-color: var(--secondary-hover); }
+        .btn-random:hover { background-color: var(--secondary-hover); }
 
-        /* Grid */
-        .grid-header {
-            font-size: 18px;
-            color: var(--text-muted);
-            margin-bottom: 10px;
+        .btn-clear { background-color: rgba(239, 68, 68, 0.2); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
+        .btn-clear:hover { background-color: rgba(239, 68, 68, 0.4); }
+
+        .btn-copy { background-color: #334155; color: white; border: 1px solid var(--border); }
+        .btn-copy:hover { background-color: #475569; }
+
+        /* Batch Flooding Controls */
+        .batch-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+            align-items: center;
         }
 
+        .btn-batch {
+            background-color: #0f172a;
+            color: var(--text-muted);
+            border: 1px dashed var(--border);
+            font-size: 13px;
+            padding: 8px;
+        }
+
+        .btn-batch:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+            background-color: rgba(99, 102, 241, 0.1);
+        }
+
+        /* Grid */
         .player-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 15px;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 12px;
             min-height: 200px;
             align-content: start;
         }
@@ -162,12 +208,12 @@
         /* Player Card */
         .player-card {
             background-color: var(--card-bg);
-            border-radius: 10px;
-            padding: 12px 15px;
+            border-radius: 12px;
+            padding: 12px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: slideIn 0.3s ease-out forwards;
             border: 1px solid rgba(255,255,255,0.05);
             transition: transform 0.2s;
         }
@@ -175,6 +221,7 @@
         .player-card:hover {
             transform: translateY(-2px);
             background-color: #3f4f66;
+            border-color: rgba(255,255,255,0.1);
         }
 
         .player-info {
@@ -185,38 +232,43 @@
         }
 
         .avatar {
-            width: 30px;
-            height: 30px;
+            width: 36px;
+            height: 36px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            font-size: 12px;
+            font-size: 14px;
             color: white;
             flex-shrink: 0;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
         .player-name {
             font-weight: 600;
-            font-size: 15px;
+            font-size: 14px;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            max-width: 110px;
         }
 
         .btn-remove {
             background: transparent;
             color: var(--text-muted);
-            padding: 5px;
-            border-radius: 5px;
+            padding: 6px;
+            border-radius: 6px;
             font-size: 18px;
             line-height: 1;
+            opacity: 0.6;
+            transition: all 0.2s;
         }
 
         .btn-remove:hover {
             background-color: rgba(239, 68, 68, 0.2);
             color: var(--danger);
+            opacity: 1;
         }
 
         /* Footer */
@@ -229,26 +281,54 @@
         }
 
         .btn-start {
-            background-color: #10b981;
+            background: linear-gradient(135deg, var(--success), #059669);
             color: white;
             font-size: 18px;
-            padding: 15px 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            padding: 15px 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(16, 185, 129, 0.4);
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
-        .btn-start:hover:not(:disabled) { background-color: #059669; }
+        .btn-start:hover { transform: translateY(-2px); box-shadow: 0 6px 25px rgba(16, 185, 129, 0.5); }
+        .btn-start:disabled { background: #475569; color: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        @keyframes popIn {
-            0% { opacity: 0; transform: scale(0.8); }
-            100% { opacity: 1; transform: scale(1); }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Responsiveness */
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background-color: var(--card-bg);
+            border-left: 4px solid var(--primary);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            font-weight: 600;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .toast.show { transform: translateX(-50%) translateY(0); }
+        .toast.success { border-color: var(--success); }
+        .toast.error { border-color: var(--danger); }
+
+        /* Responsive */
         @media (max-width: 600px) {
             .input-group { flex-direction: column; }
-            .controls { flex-direction: column; }
-            .player-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+            .controls { flex-direction: column; align-items: stretch; }
+            .btn-start { width: 100%; }
         }
     </style>
 </head>
@@ -256,46 +336,90 @@
 
 <div class="lobby-container">
     <div class="header">
-        <h1>🎮 Quiz Lobby</h1>
+        <h1>🎮 Game Flooder</h1>
         <div class="player-count">
-            <span id="count-display">0</span> / 30 Players
+            <span id="count-display">0</span> / <span id="max-display">100</span>
         </div>
     </div>
 
-    <div class="controls">
-        <div class="input-group">
-            <input type="text" id="player-input" placeholder="Enter player name..." maxlength="20" autocomplete="off">
-            <button class="btn-add" id="btn-add">Add Player</button>
+    <!-- Flooder Batch Controls -->
+    <div class="flooder-section">
+        <div class="flooder-grid">
+            <div class="input-group">
+                <input type="text" id="player-input" placeholder="Enter custom name..." maxlength="15" autocomplete="off">
+                <button class="btn btn-add" id="btn-add">Add</button>
+            </div>
+            <button class="btn btn-random" id="btn-random">🎲 Random</button>
         </div>
-        <button class="btn-random" id="btn-random">🎲 Random Name</button>
+        
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px; display:flex; justify-content:space-between;">
+            <span>Batch Injection</span>
+            <span style="font-size: 10px; opacity: 0.7;">*Select target game to avoid duplicates</span>
+        </div>
+        
+        <div class="batch-controls">
+            <button class="btn btn-batch" onclick="addBatch(5)">+5 Bots</button>
+            <button class="btn btn-batch" onclick="addBatch(25)">+25 Bots</button>
+            <button class="btn btn-batch" onclick="addBatch(50)">+50 Bots</button>
+            <button class="btn btn-batch" onclick="addBatch(100)">+100 Bots</button>
+            <button class="btn btn-batch" onclick="clearAll()" style="color: var(--danger); border-color: var(--danger);">Clear All</button>
+        </div>
     </div>
 
     <div>
-        <div class="grid-header">Participants Waiting</div>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
+            <div style="font-size: 18px; color: var(--text-muted);">Participants</div>
+            <button class="btn btn-copy" id="btn-copy" onclick="copyNames()" title="Copy all names to clipboard">
+                📋 Copy Names
+            </button>
+        </div>
         <div class="player-grid" id="player-grid">
-            <div class="empty-state">No players joined yet. Add some players to begin!</div>
+            <div class="empty-state">No players yet. Start adding bots or use the injection buttons above!</div>
         </div>
     </div>
 
     <div class="footer">
-        <button class="btn-start" id="btn-start" disabled>Start Game 🚀</button>
+        <button class="btn btn-start" id="btn-start" disabled>Start Game 🚀</button>
     </div>
 </div>
 
+<div class="toast" id="toast">Message here</div>
+
 <script>
-    const MAX_PLAYERS = 30;
+    // Configuration
+    const MAX_PLAYERS = 100;
     let players = [];
-
-    // Pre-defined random fun names
-    const randomNames = [
-        "Clever Fox", "Trivia Titan", "Brainy Badger", "Quiz Whiz", 
-        "Smarty Pants", "Fact Ninja", "Curious Cat", "Knowledge King", 
-        "Logic Lord", "Speedy Sloth", "Mystery Maven", "Data Dragon",
-        "Neon Knight", "Pixel Pirate", "Cyber Champ", "Quantum Quack"
-    ];
-
-    // Pre-defined vibrant colors for avatars
-    const avatarColors = ['#f43f5e', '#8b5cf6', '#0ea5e9', '#10b981', '#f59e0b', '#ec4899', '#6366f1'];
+    
+    // Extended Name Banks for Flooding
+    const nameBanks = {
+        generic: [
+            "NoobMaster", "ProGamer", "BrainyOne", "SmartAlex", "QuizKing", 
+            "FactFinder", "MathNerd", "TriviaKid", "BrainBox", "Genius",
+            "CyberPunk", "PixelNinja", "CodeBreaker", "DataMiner", "LogicLion",
+            "SpeedyBoi", "NightOwl", "EarlyBird", "ShadowNinja", "StealthWolf",
+            "VikingWarrior", "PirateKing", "Wizard101", "ElfLord", "DragonSlayer",
+            "GalaxyGirl", "StarBoy", "MoonWalker", "SunChaser", "CloudCatcher"
+        ],
+        blooket: [
+            "BlooketKing", "BlooketQueen", "BlooketHero", "BlooketGod", "BlooketPro",
+            "FancyBlook", "RoyalBlook", "EpicBlook", "RareBlook", "LegendaryBlook",
+            "TriviaTitan", "MathMaster", "BlooketSoul", "GoldBlook", "StealthBlook",
+            "NightBlook", "DayBlook", "RedBlook", "BlueBlook", "GreenBlook",
+            "YellowBlook", "PurpleBlook", "PinkBlook", "GrayBlook", "BrownBlook"
+        ],
+        gimkit: [
+            "GimkitPro", "GimkitMaster", "MathNinja", "GimkitGenius", "GimkitBrain",
+            "PowerUp", "DoublePoints", "StreakKing", "ScoreStorm", "LevelUp",
+            "GimkitFanatic", "QuizWhiz", "SmartStudent", "KnowledgeSeeker", "GimkitHero",
+            "EasyWin", "HardMode", "TeamPlayer", "SoloSaver", "Survivor"
+        ],
+        kahoot: [
+            "KahootKid", "TriviaKing", "QuizMaster", "Student99", "ClassLeader",
+            "BrainyStudent", "HomeworkHero", "StudySmart", "TestTaker", "ExamAce",
+            "LuckyGuess", "KnowledgeNinja", "FactFinder", "HistoryBuff", "MathWhiz",
+            "ScienceStar", "GeoGenius", "GeoWizard", "GeoGeek", "GeoGuru"
+        ]
+    };
 
     // DOM Elements
     const inputField = document.getElementById('player-input');
@@ -304,8 +428,12 @@
     const btnStart = document.getElementById('btn-start');
     const playerGrid = document.getElementById('player-grid');
     const countDisplay = document.getElementById('count-display');
+    const maxDisplay = document.getElementById('max-display');
+    const toast = document.getElementById('toast');
 
-    // Add custom player
+    // --- Core Logic ---
+
+    // Custom add
     btnAdd.addEventListener('click', () => {
         const name = inputField.value.trim();
         if (name) {
@@ -315,29 +443,46 @@
         }
     });
 
-    // Enter key support for input
     inputField.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') {
-            btnAdd.click();
-        }
+        if (e.key === 'Enter') btnAdd.click();
     });
 
-    // Add random player
+    // Random add (single)
     btnRandom.addEventListener('click', () => {
-        const randomName = randomNames[Math.floor(Math.random() * randomNames.length)];
-        // Add a random number to avoid exact duplicates visually
-        const uniqueName = `${randomName} ${Math.floor(Math.random() * 99) + 1}`;
-        addPlayer(uniqueName);
+        const allNames = [...nameBanks.generic, ...nameBanks.blooket, ...nameBanks.gimkit, ...nameBanks.kahoot];
+        const randomName = allNames[Math.floor(Math.random() * allNames.length)];
+        addPlayer(randomName);
     });
 
-    function addPlayer(name) {
+    // Batch Flooding
+    function addBatch(amount) {
         if (players.length >= MAX_PLAYERS) {
-            alert('Lobby is full! Maximum 30 players allowed.');
+            showToast(`Max capacity (${MAX_PLAYERS}) reached! Clear some players first.`, 'error');
             return;
         }
 
+        // Animation loop to prevent UI freeze
+        let i = 0;
+        const interval = setInterval(() => {
+            // Pick from a mix of banks
+            const allNames = [...nameBanks.generic, ...nameBanks.blooket, ...nameBanks.gimkit, ...nameBanks.kahoot];
+            const randomName = allNames[Math.floor(Math.random() * allNames.length)];
+            
+            // Append number to avoid exact visual duplicates if names match
+            const uniqueName = `${randomName}${Math.floor(Math.random() * 999) + 1}`;
+            
+            addPlayer(uniqueName);
+            i++;
+
+            if (i >= amount) clearInterval(interval);
+        }, 20); // Add 20 names every 20ms for speed
+    }
+
+    function addPlayer(name) {
+        if (players.length >= MAX_PLAYERS) return;
+
         const newPlayer = {
-            id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+            id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
             name: name,
             color: avatarColors[Math.floor(Math.random() * avatarColors.length)]
         };
@@ -351,37 +496,55 @@
         renderLobby();
     }
 
+    function clearAll() {
+        players = [];
+        renderLobby();
+        showToast('Lobby cleared successfully.', 'success');
+    }
+
+    function copyNames() {
+        if (players.length === 0) {
+            showToast('No names to copy!', 'error');
+            return;
+        }
+        
+        const namesString = players.map(p => p.name).join(', '); // Comma separated
+        navigator.clipboard.writeText(namesString).then(() => {
+            showToast(`Copied ${players.length} names to clipboard!`, 'success');
+        }).catch(err => {
+            showToast('Failed to copy names.', 'error');
+        });
+    }
+
     function renderLobby() {
         // Update Count
         countDisplay.textContent = players.length;
 
-        // Toggle button states based on limit
-        const isFull = players.length >= MAX_PLAYERS;
-        btnAdd.disabled = isFull;
-        btnRandom.disabled = isFull;
-        inputField.disabled = isFull;
-
-        // Toggle Start button (require at least 2 players to start a multiplayer game)
+        // Update Start Button
         btnStart.disabled = players.length < 2;
         if(players.length < 2) {
-            btnStart.textContent = "Waiting for players...";
+            btnStart.innerHTML = "Waiting for players... (2+ needed)";
+            btnStart.style.opacity = "0.7";
         } else {
-            btnStart.textContent = "Start Game 🚀";
+            btnStart.innerHTML = "Start Game 🚀";
+            btnStart.style.opacity = "1";
         }
 
         // Render Grid
-        playerGrid.innerHTML = ''; // Clear current grid
+        playerGrid.innerHTML = ''; 
 
         if (players.length === 0) {
-            playerGrid.innerHTML = '<div class="empty-state">No players joined yet. Add some players to begin!</div>';
+            playerGrid.innerHTML = '<div class="empty-state">No players joined yet. Use the buttons above to flood the lobby!</div>';
             return;
         }
 
-        players.forEach(player => {
+        // Only render the top 80 to keep UI fast, but keep data in array
+        const displayCount = Math.min(players.length, 80); 
+        const displayList = players.slice(0, displayCount);
+
+        displayList.forEach(player => {
             const card = document.createElement('div');
             card.className = 'player-card';
-            
-            // Generate initials for avatar
             const initials = player.name.substring(0, 2).toUpperCase();
 
             card.innerHTML = `
@@ -389,16 +552,38 @@
                     <div class="avatar" style="background-color: ${player.color}">${initials}</div>
                     <span class="player-name" title="${player.name}">${player.name}</span>
                 </div>
-                <button class="btn-remove" onclick="removePlayer('${player.id}')" title="Remove Player">×</button>
+                <button class="btn-remove" onclick="removePlayer('${player.id}')" title="Remove">×</button>
             `;
-            
             playerGrid.appendChild(card);
         });
+
+        if (players.length > 80) {
+            const moreMsg = document.createElement('div');
+            moreMsg.style.gridColumn = "1 / -1";
+            moreMsg.style.textAlign = "center";
+            moreMsg.style.padding = "10px";
+            moreMsg.style.fontSize = "12px";
+            moreMsg.style.color = "#64748b";
+            moreMsg.innerHTML = `... and ${players.length - 80} more bots simulated ...`;
+            playerGrid.appendChild(moreMsg);
+        }
     }
 
-    // Initial render
+    // Toast System
+    function showToast(message, type = 'success') {
+        toast.textContent = message;
+        toast.className = `toast ${type} show`;
+        
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
+    }
+
+    // Helper Colors
+    const avatarColors = ['#f43f5e', '#8b5cf6', '#0ea5e9', '#10b981', '#f59e0b', '#ec4899', '#6366f1', '#06b6d4'];
+
+    // Initialize
     renderLobby();
 </script>
-
 </body>
 </html>
